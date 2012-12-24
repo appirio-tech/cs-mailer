@@ -11,4 +11,10 @@ class StreamingMailer < ActionMailer::Base
     mail(:to => to, :from => from, :subject => subject)
   end  
 
+  def contact_launch_email(to, from, subject, membername, challenge)
+  	@membername = membername
+  	@challenge = challenge
+    mail(:to => to, :from => from, :subject => subject, :bcc => 'jeff@appirio.com')
+  end    
+
 end

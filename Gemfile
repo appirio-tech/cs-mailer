@@ -6,6 +6,7 @@ gem 'jquery-rails'
 gem 'faye', '0.8.3'
 gem 'restforce'
 gem 'thin'
+gem 'forcifier', git: 'git://github.com/jeffdonthemic/forcifier.git'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'
