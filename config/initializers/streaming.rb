@@ -8,18 +8,23 @@ client = Restforce.new :username => ENV['SFDC_USERNAME'],
   :client_secret  => ENV['SFDC_CLIENT_SECRET'],
   :host           => ENV['SFDC_HOST']  
 
-puts client.to_yaml
 
-client.authenticate!
+begin
+  client.authenticate!
+  puts "[INFO][MAILER] Successfully authenticated"
 
-EM.next_tick do
-  client.subscribe 'AllMails' do |message|
-    if ENV['MAILER_ENABLED'].eql?('true')
-      id = message['sobject']['Id']
-      puts "[INFO][MAILER]Received mail message #{id}"
-      mail = client.query("select Name, To__c, From__c, Subject__c, Body__c from Mail__c where Id = '"+id+"' limit 1").first
-      m = StreamingMailer.standard_email(mail.To__c,mail.From__c,mail.Subject__c,mail.Body__c).deliver
-      puts "[INFO][MAILER]Mail #{mail.Name} sent: To: #{mail.To__c} - Subject: #{mail.Subject__c}"
+  EM.next_tick do
+    client.subscribe 'AllMails' do |message|
+      if ENV['MAILER_ENABLED'].eql?('true')
+        id = message['sobject']['Id']
+        puts "[INFO][MAILER]Received mail message #{id}"
+        mail = client.query("select Name, To__c, From__c, Subject__c, Body__c from Mail__c where Id = '"+id+"' limit 1").first
+        m = StreamingMailer.standard_email(mail.To__c,mail.From__c,mail.Subject__c,mail.Body__c).deliver
+        puts "[INFO][MAILER]Mail #{mail.Name} sent: To: #{mail.To__c} - Subject: #{mail.Subject__c}"
+      end
     end
   end
+
+rescue
+  puts "[FATAL][MAILER] Could not authenticate. Not listening for streaming events."
 end
