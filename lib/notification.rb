@@ -30,10 +30,12 @@ module Notification
 		def self.private_message(id)
 
 		  mail = query_salesforce("select Name, Message_Body__c, Sent_From__r.Name, 
-		  	Sent_To__r.Name, Sent_To__r.Email__c, Subject__c 
+		  	Sent_From__r.Profile_Pic__c, Sent_To__r.Name, Sent_To__r.Email__c, Subject__c 
 		  	from Notification_Staging__c where Id = '"+id+"' limit 1").first
-		  StreamingMailer.standard_email(mail.sent_to__r.email,'donotreply@cloudspokes.com',mail.subject,mail.message_body).deliver
-		  puts "[INFO][Mailer]Private mail #{mail.name} sent: To: #{mail.sent_to__r.email} - Subject: #{mail.subject}"		
+		  from_member = { 'membername' => mail.sent_from__r.name, 'profile_pic' => mail.sent_from__r.profile_pic }
+		  StreamingMailer.private_message_email(mail.sent_to__r.email, 'donotreply@cloudspokes.com',
+		  	mail.subject, mail.message_body, from_member).deliver
+		  puts "[INFO][Mailer]Private message #{mail.name} sent: To: #{mail.sent_to__r.email} - Subject: #{mail.subject}"		
 
 		end
 

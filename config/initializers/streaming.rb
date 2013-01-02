@@ -9,7 +9,6 @@ client = Restforce.new :username => ENV['SFDC_USERNAME'],
   :client_secret  => ENV['SFDC_CLIENT_SECRET'],
   :host           => ENV['SFDC_HOST']  
 
-
 begin
   client.authenticate!
   puts "[INFO][MAILER] Successfully authenticated"
