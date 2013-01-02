@@ -2,6 +2,20 @@
 <html>
   <head>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    <style>
+		a.button_big {
+			background: none repeat scroll 0 0 #EEEEEE;  
+		  float: left;   
+			border-radius: 5px 5px 5px 5px;
+		  color: #408CBF;
+		  display: block;
+		  font-size: 18px;  
+			margin: 0 4px;
+		  padding: 8px 12px;
+		  text-decoration: none;
+		  text-transform: lowercase;
+		}    
+    </style>
   </head>
   <body>
 	<table with="100%" cellpadding="2" cellspacing="2">
@@ -12,16 +26,20 @@
 	</table>
 
   <p>
-	<a href="http://www.cloudspokes.com/members/<%= @from_member['membername'] %>"><%= @from_member['membername'] %></a> has sent you a new private message at CloudSpokes. You can reply to the message
+	<a href="http://www.cloudspokes.com/members/<%= @from_member['membername'] %>"><%= @from_member['membername'] %></a> has sent you a new private message at CloudSpokes.
   </p>
 
 	<table cellpadding="5" cellspacing="5">
 	<tr>
 		<td>&nbsp;</td>
 		<td><img src="<%= @from_member['profile_pic'] %>" width="75"></a></td>
-		<td><em><%= raw(@body) %></em></td>
+		<td><em><b><%= raw(@body) %><b></em></td>
 	</tr>	
 	</table> 
+
+	<br/><a class="button_big" href="http://www.cloudspokes.com/messages">Reply to this message</a><br/><br/><br/>
+
+	<p>You can <a href="http://www.cloudspokes.com/account">change your notification settings</a> to determine how you receive these messages.</p>
 		
   <h3 style="padding-top:25px">Follow Us!</h3>
 	<table cellpadding="2" cellspacing="2">
