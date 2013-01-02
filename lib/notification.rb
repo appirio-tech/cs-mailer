@@ -14,6 +14,7 @@ module Notification
 
 		generic(id) if type.downcase.eql?('generic')
 		challenge_launch(id) if type.downcase.eql?('challenge launch')
+		private_message(id) if type.downcase.eql?('private message')
 
 	end
 
@@ -25,6 +26,16 @@ module Notification
 	    puts "[FATAL][Mailer] Query exception: #{soql} -- #{e.message}" 
 	    nil
 	  end  
+
+		def self.private_message(id)
+
+		  mail = query_salesforce("select Name, Message_Body__c, Sent_From__r.Name, 
+		  	Sent_To__r.Name, Sent_To__r.Email__c, Subject__c 
+		  	from Notification_Staging__c where Id = '"+id+"' limit 1").first
+		  StreamingMailer.standard_email(mail.sent_to__r.email,'donotreply@cloudspokes.com',mail.subject,mail.message_body).deliver
+		  puts "[INFO][Mailer]Private mail #{mail.name} sent: To: #{mail.sent_to__r.email} - Subject: #{mail.subject}"		
+
+		end
 
 		def self.generic(id)
 
