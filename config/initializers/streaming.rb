@@ -21,6 +21,12 @@ begin
         Notification.send_mail(message['sobject']['Id'], message['sobject']['Type__c'])
       end
     end
+    client.subscribe 'PrivateMessages' do |message|
+      if ENV['MAILER_ENABLED'].eql?('true')
+        puts "[INFO][MAILER]Received private message #{message['sobject']['Id']}"
+        Notification.send_mail(message['sobject']['Id'], 'Private Message')
+      end
+    end
   end
 
 rescue
