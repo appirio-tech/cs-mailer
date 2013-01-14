@@ -12,14 +12,9 @@ module Notification
 
 		@client.authenticate!
 
-		unless already_sent?(id)
-			# write the id to the cache so it doesn't get sent twice
-			stash_in_cache(id)
-
-			generic(id) if type.downcase.eql?('generic')
-			challenge_launch(id) if type.downcase.eql?('challenge launch')
-			private_message(id) if type.downcase.eql?('private message')
-		end
+		generic(id) if type.downcase.eql?('generic')
+		challenge_launch(id) if type.downcase.eql?('challenge launch')
+		private_message(id) if type.downcase.eql?('private message')
 
 	end
 
@@ -65,19 +60,6 @@ module Notification
 			end
 
 		end	
-
-		def self.already_sent?(id)
-			if Rails.cache.read(id).nil?
-				false
-			else
-				Rails.logger.warn "[WARN][Mailer]Message with ID #{id} found in the cache and therefore not resent."
-				true
-			end
-		end	
-
-		def self.stash_in_cache(id)
-			Rails.cache.write id, 'exists', :expires_in => 60.seconds
-		end
 
 	  def self.query_salesforce(soql)
 	    Forcifier::JsonMassager.deforce_json(@client.query(soql))
