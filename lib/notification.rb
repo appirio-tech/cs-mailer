@@ -15,7 +15,7 @@ module Notification
 		unless already_sent?(id)
 			# write the id to the cache so it doesn't get sent twice
 			stash_in_cache(id)
-			 
+
 			generic(id) if type.downcase.eql?('generic')
 			challenge_launch(id) if type.downcase.eql?('challenge launch')
 			private_message(id) if type.downcase.eql?('private message')
@@ -34,7 +34,7 @@ module Notification
 		  StreamingMailer.private_message_email(mail.sent_to__r.email, 'donotreply@cloudspokes.com',
 		  	mail.subject, mail.message_body, mail.related_to_id, from_member).deliver
 		  # write the id to the cache so this message doesn't get sent again
-		  puts "[INFO][Mailer]Private message #{mail.name} sent: To: #{mail.sent_to__r.email} - Subject: #{mail.subject}"
+		  Rails.logger.info "[INFO][Mailer]Private message #{mail.name} sent: To: #{mail.sent_to__r.email} - Subject: #{mail.subject}"
 
 		end
 
@@ -43,7 +43,7 @@ module Notification
 		  mail = query_salesforce("select Name, To__c, From__c, Subject__c, Body__c 
 		  	from Mail__c where Id = '"+id+"' limit 1").first
 		  StreamingMailer.standard_email(mail.to,mail.from,mail.subject,mail.body).deliver
-		  puts "[INFO][Mailer]Generic mail #{mail.name} sent: To: #{mail.to} - Subject: #{mail.subject}"
+		  Rails.logger.info "[INFO][Mailer]Generic mail #{mail.name} sent: To: #{mail.to} - Subject: #{mail.subject}"
 
 		end
 
@@ -61,7 +61,7 @@ module Notification
 				member = query_salesforce("select name, email__c from Member__c 
 					where Id = '"+challenge.contact+"' limit 1").first  
 				StreamingMailer.contact_launch_email(member.email, mail.from, mail.subject, member.name, challenge).deliver
-			  puts "[INFO][Mailer]Challenge launched mail #{mail.name} sent: To: #{mail.to} - Subject: #{mail.subject}"	
+			  Rails.logger.info "[INFO][Mailer]Challenge launched mail #{mail.name} sent: To: #{mail.to} - Subject: #{mail.subject}"	
 			end
 
 		end	
@@ -70,7 +70,7 @@ module Notification
 			if Rails.cache.read(id).nil?
 				false
 			else
-				puts "[WARN][Mailer]Message with ID #{id} found in the cache and therefore not resent."
+				Rails.logger.warn "[WARN][Mailer]Message with ID #{id} found in the cache and therefore not resent."
 				true
 			end
 		end	
@@ -82,7 +82,7 @@ module Notification
 	  def self.query_salesforce(soql)
 	    Forcifier::JsonMassager.deforce_json(@client.query(soql))
 	  rescue Exception => e
-	    puts "[FATAL][Mailer] Query exception: #{soql} -- #{e.message}" 
+	    Rails.logger.fatal "[FATAL][Mailer] Query exception: #{soql} -- #{e.message}" 
 	    nil
 	  end  			
 

@@ -11,23 +11,23 @@ client = Restforce.new :username => ENV['SFDC_USERNAME'],
 
 begin
   client.authenticate!
-  puts "[INFO][MAILER] Successfully authenticated"
+  Rails.logger.info "[INFO][MAILER] Successfully authenticated"
 
   EM.next_tick do
     client.subscribe 'AllMails' do |message|
       if ENV['MAILER_ENABLED'].eql?('true')
-        puts "[INFO][MAILER]Received mail message #{message['sobject']['Id']}"
+        Rails.logger.info "[INFO][MAILER]Received mail message #{message['sobject']['Id']}"
         Notification.send_mail(message['sobject']['Id'], message['sobject']['Type__c'])
       end
     end
     client.subscribe 'PrivateMessages' do |message|
       if ENV['MAILER_ENABLED'].eql?('true')
-        puts "[INFO][MAILER]Received private message #{message['sobject']['Id']}"
+        Rails.logger.info "[INFO][MAILER]Received private message #{message['sobject']['Id']}"
         Notification.send_mail(message['sobject']['Id'], 'Private Message')
       end
     end
   end
 
 rescue
-  puts "[FATAL][MAILER] Could not authenticate. Not listening for streaming events."
+  Rails.logger.fatal "[FATAL][MAILER] Could not authenticate. Not listening for streaming events."
 end
