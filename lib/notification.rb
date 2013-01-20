@@ -18,7 +18,7 @@ module Notification
 
 	end
 
-	private
+	#private
 
 		def self.private_message(id)
 
@@ -44,22 +44,51 @@ module Notification
 
 		def self.challenge_launch(id)
 
+			recipients = []
+
 			# get the mail to go out
 		  mail = query_salesforce("select Name, Challenge__c, From__c, Subject__c from Mail__c 
 		  	where Id = '"+id+"' limit 1").first
+		  
 		  # get the challenge details
 			challenge = query_salesforce("select name, challenge_id__c, end_date__c, contact__c 
-		  	from Challenge__c where Id = '"+mail.challenge+"' limit 1").first		
+		  	from Challenge__c where Id = '"+mail.challenge+"' limit 1").first
+
+		  # get all of the judges
+			judges = query_salesforce("select member__r.name, member__r.email__c 
+				from challenge_reviewer__c where challenge__c = '"+mail.challenge+"'")
+
+		  # get all of the comment notifiers
+			notifiers = query_salesforce("select member__r.name, member__r.email__c 
+				from challenge_comment_notifier__c where challenge__c = '"+mail.challenge+"'")	
+
+			# add the judges and notifiers to the recipients
+			judges.each { |m| recipients << {:name => m['member__r']['name'], :email => m['member__r']['email']} }
+			notifiers.each { |m| recipients << {:name => m['member__r']['name'], :email => m['member__r']['email']} }		
 
 		  if challenge.contact
 			  # get the primary contact to send to
 				member = query_salesforce("select name, email__c from Member__c 
 					where Id = '"+challenge.contact+"' limit 1").first  
-				StreamingMailer.contact_launch_email(member.email, mail.from, mail.subject, member.name, challenge).deliver
-			  Rails.logger.info "[INFO][Mailer]Challenge launched mail #{mail.name} sent: To: #{mail.to} - Subject: #{mail.subject}"	
+				recipients << {:name => member.name, :email => member.email}
 			end
 
+			unique_recipients(recipients).each do |r|
+				StreamingMailer.contact_launch_email(r[:email], mail.from, mail.subject, r[:name], challenge).deliver
+			  Rails.logger.info "[INFO][Mailer]Challenge launched mail #{r[:name]} sent: To: #{r[:email]} - Subject: #{mail.subject}"	
+			end			
+
 		end	
+
+		def self.unique_recipients(recipients)
+			unique = []
+			recipients.each do |r|
+				if unique.detect { |h| h[:name] == r[:name] }.nil?	
+					unique << r
+				end
+			end	
+			unique
+		end
 
 	  def self.query_salesforce(soql)
 	    Forcifier::JsonMassager.deforce_json(@client.query(soql))
