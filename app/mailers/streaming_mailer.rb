@@ -11,10 +11,11 @@ class StreamingMailer < ActionMailer::Base
     mail(:to => to, :from => from, :subject => subject)
   end  
 
-  def contact_launch_email(to, from, subject, membername, challenge)
+  def challenge_launch_email(to, subject, membername, challenge)
   	@membername = membername
   	@challenge = challenge
-    mail(:to => to, :from => from, :subject => subject, :bcc => 'jeff@appirio.com')
+    mail(:to => "#{membername} <#{to}>", :from => 'CloudSpokes Team <support@cloudspokes.com>', 
+      :subject => subject, :bcc => 'jeff@jeffdouglas.com')
   end    
 
   def private_message_email(to, from, subject, body, private_message_id, from_member)

@@ -47,12 +47,13 @@ module Notification
 			recipients = []
 
 			# get the mail to go out
-		  mail = query_salesforce("select Name, Challenge__c, From__c, Subject__c from Mail__c 
+		  mail = query_salesforce("select Name, Challenge__c, Subject__c from Mail__c 
 		  	where Id = '"+id+"' limit 1").first
 		  
 		  # get the challenge details
-			challenge = query_salesforce("select name, challenge_id__c, end_date__c, contact__c 
-		  	from Challenge__c where Id = '"+mail.challenge+"' limit 1").first
+			challenge = query_salesforce("select name, challenge_id__c, end_date__c, review_date__c, 
+				contact__c, community_judging__c 
+				from Challenge__c where Id = '"+mail.challenge+"' limit 1").first
 
 		  # get all of the judges
 			judges = query_salesforce("select member__r.name, member__r.email__c 
@@ -74,7 +75,7 @@ module Notification
 			end
 
 			unique_recipients(recipients).each do |r|
-				StreamingMailer.contact_launch_email(r[:email], mail.from, mail.subject, r[:name], challenge).deliver
+				StreamingMailer.challenge_launch_email(r[:email], mail.subject, r[:name], challenge).deliver
 			  Rails.logger.info "[INFO][Mailer]Challenge launched mail #{r[:name]} sent: To: #{r[:email]} - Subject: #{mail.subject}"	
 			end			
 
