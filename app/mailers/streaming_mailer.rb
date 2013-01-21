@@ -15,7 +15,7 @@ class StreamingMailer < ActionMailer::Base
     @membername = membername
     @challenge = challenge
     mail(:to => "#{membername} <#{to}>", :from => 'CloudSpokes Team <support@cloudspokes.com>', 
-      :subject => subject, :bcc => 'jeff@jeffdouglas.com')
+      :subject => subject)
   end    
 
   def challenge_scored_email(to, subject, membername, challenge, waiting_review)
@@ -23,14 +23,14 @@ class StreamingMailer < ActionMailer::Base
     @challenge = challenge
     @waiting_review = waiting_review
     mail(:to => "#{membername} <#{to}>", :from => 'CloudSpokes Team <support@cloudspokes.com>', 
-      :subject => subject, :bcc => 'jeff@jeffdouglas.com')
+      :subject => subject)
   end      
 
   def challenge_launch_email(to, subject, membername, challenge)
   	@membername = membername
   	@challenge = challenge
     mail(:to => "#{membername} <#{to}>", :from => 'CloudSpokes Team <support@cloudspokes.com>', 
-      :subject => subject, :bcc => 'jeff@jeffdouglas.com')
+      :subject => subject)
   end    
 
   def private_message_email(to, subject, body, private_message_id, from_member)
