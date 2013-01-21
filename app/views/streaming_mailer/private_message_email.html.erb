@@ -1,15 +1,4 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
-  </head>
-  <body>
-	<table with="100%" cellpadding="2" cellspacing="2">
-	<tr>
-		<td><a href="http://www.cloudspokes.com"><img src="https://s3.amazonaws.com/cs-public/email_images/cloudspokes-logo.png" width="100"></a></td>
-		<td><td>&nbsp;</td><h2><%= @subject %></h2></td>
-	</tr>
-	</table>
+<%= render "template_top", :title => @subject %>
 
   <p>
 	<a href="http://www.cloudspokes.com/members/<%= @from_member['membername'] %>"><%= @from_member['membername'] %></a> has sent you the following private message at CloudSpokes:
@@ -25,17 +14,7 @@
 
 	<p><a href="http://www.cloudspokes.com/messages/<%= @private_message_id %>"><img src="http://cs-public.s3.amazonaws.com/email_images/reply-to-message.png" alt="reply to this message"></a></p>
 		
-  <h3 style="padding-top:25px">Follow Us!</h3>
-	<table cellpadding="2" cellspacing="2">
-	<tr>
-		<td><a href="http://www.github.com/cloudspokes"><img src="https://s3.amazonaws.com/cs-public/email_images/github_64.png"></a></td>
-		<td><a href="http://www.twitter.com/cloudspokes"><img src="https://s3.amazonaws.com/cs-public/email_images/twitter_64.png"></a></td>
-		<td><a href="http://www.facebook.com/cloudspokes"><img src="https://s3.amazonaws.com/cs-public/email_images/facebook_64.png"></a></td>
-		<td><a href="http://www.youtube.com/cloudspokescommunity"><img src="https://s3.amazonaws.com/cs-public/email_images/youtube_icon.png" width="59" style="padding-left:5px;padding-top:3px"></a></td>
-		<td><a href="http://blog.cloudspokes.com"><img src="https://s3.amazonaws.com/cs-public/email_images/blogicon.png" width="55" style="padding-left:10px;padding-top:4px"></a></td>
-		<td><a href="http://www.cloudspokes.com/challenges/feed"><img src="https://s3.amazonaws.com/cs-public/email_images/rss_icon.png" width="57" style="padding-left:10px;padding-top:3px"></a></td>
-	</tr>
-	</table>
+  <%= render "followus" %>
 
 	<p><a href="http://www.cloudspokes.com">http://www.cloudspokes.com</a></p>
 

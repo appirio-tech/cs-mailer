@@ -92,10 +92,10 @@ module Notification
 		  	Sent_From__r.Profile_Pic__c, Sent_To__r.Name, Sent_To__r.Email__c, Subject__c 
 		  	from Notification_Staging__c where Id = '"+id+"' limit 1").first
 		  from_member = { 'membername' => mail.sent_from__r.name, 'profile_pic' => mail.sent_from__r.profile_pic }
-		  StreamingMailer.private_message_email(mail.sent_to__r.email, 'donotreply@cloudspokes.com',
-		  	mail.subject, mail.message_body, mail.related_to_id, from_member).deliver
+		  StreamingMailer.private_message_email(mail.sent_to__r.email, mail.subject, 
+		  	mail.message_body, mail.related_to_id, from_member).deliver
 		  # write the id to the cache so this message doesn't get sent again
-		  Rails.logger.info "[INFO][Mailer]Private message #{mail.name} sent: To: #{mail.sent_to__r.email} - Subject: #{mail.subject}"
+		  puts "[INFO][Mailer]Private message #{mail.name} sent: To: #{mail.sent_to__r.email} - Subject: #{mail.subject}"
 
 		end
 

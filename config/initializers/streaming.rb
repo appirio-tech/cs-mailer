@@ -11,7 +11,7 @@ client = Restforce.new :username => ENV['SFDC_USERNAME'],
 
 begin
   client.authenticate!
-  Rails.logger.info "[INFO][MAILER] Successfully authenticated"
+  Rails.logger.info "[DEBUG][MAILER] Successfully authenticated"
 
   EM.next_tick do
     client.subscribe 'AllMails' do |message|
