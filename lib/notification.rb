@@ -14,11 +14,77 @@ module Notification
 
 		generic(id) if type.downcase.eql?('generic')
 		challenge_launch(id) if type.downcase.eql?('challenge launch')
+		challenge_closed(id) if type.downcase.eql?('challenge closed')
+		challenge_scored(id, false) if type.downcase.eql?('challenge scored complete')
+		challenge_scored(id, true) if type.downcase.eql?('challenge scored waiting review')
 		private_message(id) if type.downcase.eql?('private message')
 
 	end
 
-	#private
+	private	
+
+		def self.challenge_scored(id, waiting_review)
+
+			# get the mail to go out
+		  mail = query_salesforce("select Name, Challenge__c, Subject__c from Mail__c 
+		  	where Id = '"+id+"' limit 1").first		
+		  	
+		  # get the challenge details
+			challenge = query_salesforce("select name, challenge_id__c, total_prize_money__c, prize_money_paid__c,
+				community_judging__c, submissions__c, number_of_reviewers__c
+				from Challenge__c where Id = '"+mail.challenge+"' limit 1").first	
+
+			recipients = all_challenge_recipients(mail.challenge)	
+
+			# add is jeff	
+			recipients << {:name => 'jeffdonthemic', :email => 'jeff@appirio.com'}	
+
+			unique_recipients(recipients).each do |r|
+				StreamingMailer.challenge_scored_email(r[:email], mail.subject, r[:name], challenge, waiting_review).deliver
+			  Rails.logger.info "[INFO][Mailer]Challenge scored mail (waiting_review: #{waiting_review}) for #{r[:name]} sent: To: #{r[:email]}"	
+			end
+
+		end	
+
+		def self.challenge_closed(id)
+
+			# get the mail to go out
+		  mail = query_salesforce("select Name, Challenge__c, Subject__c from Mail__c 
+		  	where Id = '"+id+"' limit 1").first		
+		  	
+		  # get the challenge details
+			challenge = query_salesforce("select name, challenge_id__c, winner_announced__c, review_date__c, 
+				contact__c, community_judging__c, submissions__c, number_of_reviewers__c
+				from Challenge__c where Id = '"+mail.challenge+"' limit 1").first	
+
+			recipients = all_challenge_recipients(mail.challenge)			
+
+			unique_recipients(recipients).each do |r|
+				StreamingMailer.challenge_closed_email(r[:email], mail.subject, r[:name], challenge).deliver
+			  Rails.logger.info "[INFO][Mailer]Challenge closed mail for #{r[:name]} sent: To: #{r[:email]}"	
+			end
+
+		end		
+
+		def self.challenge_launch(id)
+
+			# get the mail to go out
+		  mail = query_salesforce("select Name, Challenge__c, Subject__c from Mail__c 
+		  	where Id = '"+id+"' limit 1").first
+		  
+		  # get the challenge details
+			challenge = query_salesforce("select name, challenge_id__c, end_date__c, review_date__c, 
+				contact__c, community_judging__c 
+				from Challenge__c where Id = '"+mail.challenge+"' limit 1").first
+
+			recipients = all_challenge_recipients(mail.challenge)			
+
+			unique_recipients(recipients).each do |r|
+				StreamingMailer.challenge_launch_email(r[:email], mail.subject, r[:name], challenge).deliver
+			  Rails.logger.info "[INFO][Mailer]Challenge launched mail for #{r[:name]} sent: To: #{r[:email]}"	
+			end			
+
+		end	
 
 		def self.private_message(id)
 
@@ -40,46 +106,35 @@ module Notification
 		  StreamingMailer.standard_email(mail.to,mail.from,mail.subject,mail.body).deliver
 		  Rails.logger.info "[INFO][Mailer]Generic mail #{mail.name} sent: To: #{mail.to} - Subject: #{mail.subject}"
 
-		end
+		end		
 
-		def self.challenge_launch(id)
+		def self.all_challenge_recipients(id)
 
 			recipients = []
 
-			# get the mail to go out
-		  mail = query_salesforce("select Name, Challenge__c, Subject__c from Mail__c 
-		  	where Id = '"+id+"' limit 1").first
-		  
-		  # get the challenge details
-			challenge = query_salesforce("select name, challenge_id__c, end_date__c, review_date__c, 
-				contact__c, community_judging__c 
-				from Challenge__c where Id = '"+mail.challenge+"' limit 1").first
+			# get the primary contact to send to
+			primary_contact = query_salesforce("select contact__r.name, contact__r.email__c 
+				from challenge__c where Id = '"+id+"' limit 1").first			
 
 		  # get all of the judges
 			judges = query_salesforce("select member__r.name, member__r.email__c 
-				from challenge_reviewer__c where challenge__c = '"+mail.challenge+"'")
+				from challenge_reviewer__c where challenge__c = '"+id+"'")
 
 		  # get all of the comment notifiers
 			notifiers = query_salesforce("select member__r.name, member__r.email__c 
-				from challenge_comment_notifier__c where challenge__c = '"+mail.challenge+"'")	
+				from challenge_comment_notifier__c where challenge__c = '"+id+"'")	
 
 			# add the judges and notifiers to the recipients
 			judges.each { |m| recipients << {:name => m['member__r']['name'], :email => m['member__r']['email']} }
 			notifiers.each { |m| recipients << {:name => m['member__r']['name'], :email => m['member__r']['email']} }		
 
-		  if challenge.contact
-			  # get the primary contact to send to
-				member = query_salesforce("select name, email__c from Member__c 
-					where Id = '"+challenge.contact+"' limit 1").first  
-				recipients << {:name => member.name, :email => member.email}
-			end
-
-			unique_recipients(recipients).each do |r|
-				StreamingMailer.challenge_launch_email(r[:email], mail.subject, r[:name], challenge).deliver
-			  Rails.logger.info "[INFO][Mailer]Challenge launched mail #{r[:name]} sent: To: #{r[:email]} - Subject: #{mail.subject}"	
+		  if primary_contact['contact__r']
+				recipients << {:name => primary_contact['contact__r']['name'], :email => primary_contact['contact__r']['email']}
 			end			
 
-		end	
+			recipients
+
+		end
 
 		def self.unique_recipients(recipients)
 			unique = []

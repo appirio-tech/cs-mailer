@@ -9,7 +9,22 @@ class StreamingMailer < ActionMailer::Base
   	@body = body
   	@subject = subject
     mail(:to => to, :from => from, :subject => subject)
-  end  
+  end 
+
+  def challenge_closed_email(to, subject, membername, challenge)
+    @membername = membername
+    @challenge = challenge
+    mail(:to => "#{membername} <#{to}>", :from => 'CloudSpokes Team <support@cloudspokes.com>', 
+      :subject => subject, :bcc => 'jeff@jeffdouglas.com')
+  end    
+
+  def challenge_scored_email(to, subject, membername, challenge, waiting_review)
+    @membername = membername
+    @challenge = challenge
+    @waiting_review = waiting_review
+    mail(:to => "#{membername} <#{to}>", :from => 'CloudSpokes Team <support@cloudspokes.com>', 
+      :subject => subject, :bcc => 'jeff@jeffdouglas.com')
+  end      
 
   def challenge_launch_email(to, subject, membername, challenge)
   	@membername = membername
