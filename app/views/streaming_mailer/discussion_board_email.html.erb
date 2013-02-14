@@ -1,0 +1,22 @@
+<%= render "template_top", :title => @challenge.name %>
+
+<p>A new comment has been posted by <a href="http://www.cloudspokes.com/members/<%= @comment.member__r.name %>"><%= @comment.member__r.name %></a> for this challenge that you are participating in:</p>
+
+<table cellpadding="5" cellspacing="5">
+<tr>
+	<td>&nbsp;</td>
+	<td style="vertical-align:top;"><img src="<%= @comment.member__r.profile_pic %>" width="75"></a></td>
+	<td><em>"<%= raw(@comment.comment) %>"</em></td>
+</tr>	
+</table>
+<p><br/>
+	You can <a href="http://www.cloudspokes.com/challenges/<%= @challenge.challenge_id %><% if !@comment.reply_to.nil? %>?reply_to=<%= @comment.reply_to %>#comment<% end %>">reply to this comment</a> or <a href="http://www.cloudspokes.com/challenges/<%= @challenge.challenge_id %>">view the challenge</a> for more info.
+</p>
+
+<p><table>
+<tr>
+	<td><img src="http://cs-public.s3.amazonaws.com/email_images/email-remove.png" width="40"></td><td>&nbsp;</td><td><a href="http://www.cloudspokes.com/challenges/<%= @challenge.challenge_id %>/toggle_discussion_email">Stop sending me</a> Discussion list email for this challenge.</td>
+<tr>
+</table></p>
+
+<%= render "template_bottom" %>

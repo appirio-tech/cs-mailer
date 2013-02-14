@@ -33,6 +33,14 @@ class StreamingMailer < ActionMailer::Base
       :subject => subject)
   end    
 
+  def discussion_board_email(to, subject, membername, challenge, comment)
+    @membername = membername
+    @challenge = challenge
+    @comment = comment
+    mail(:to => "#{membername} <#{to}>", :from => 'CloudSpokes Team <support@cloudspokes.com>', 
+      :subject => subject)
+  end    
+
   def private_message_email(to, subject, body, private_message_id, from_member)
     @body = body
     @subject = subject

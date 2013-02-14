@@ -18,10 +18,46 @@ module Notification
 		challenge_scored(id, false) if type.downcase.eql?('challenge scored complete')
 		challenge_scored(id, true) if type.downcase.eql?('challenge scored waiting review')
 		private_message(id) if type.downcase.eql?('private message')
+		discussion_board_post(id) if type.downcase.eql?('discussion board')
 
 	end
 
 	private	
+
+		def self.discussion_board_post(id)
+
+			# get the mail to go out
+		  mail = query_salesforce("select Name, Challenge__c, Challenge_Comment__c, Subject__c from Mail__c 
+		  	where Id = '"+id+"' limit 1").first	
+
+		  # get the challenge
+			challenge = query_salesforce("select name, challenge_id__c
+				from Challenge__c where Id = '"+mail.challenge+"' limit 1").first			  
+
+		  # get the comment
+			comment = query_salesforce("select Id, Member__r.name, Member__r.Profile_Pic__c,
+				Comment__c, Reply_To__c from Challenge_Comment__c where id 
+				= '"+mail.challenge_comment+"' limit 1").first		
+
+			# get all of the non-participant members
+			recipients = all_challenge_recipients(mail.challenge)
+
+			# get all registered & submitted participants where Send_Discussion_Emails__c = true
+			participants = query_salesforce("select member__r.name, member__r.email__c from challenge_participant__c 
+      where challenge__c = '#{mail.challenge}' and send_discussion_emails__c =  true 
+      and status__c IN ('Registered','Submitted')")		
+
+			# add each participant
+      participants.each do |p|
+				recipients << {:name => p.member__r.name, :email => p.member__r.email}	
+      end
+
+			unique_recipients(recipients).each do |r|
+				StreamingMailer.discussion_board_email(r[:email], mail.subject, r[:name], challenge, comment).deliver
+			  Rails.logger.info "[INFO][Mailer]Discussion board post mail for #{r[:name]} sent: To: #{r[:email]}"	
+			end      
+
+		end
 
 		def self.challenge_scored(id, waiting_review)
 
