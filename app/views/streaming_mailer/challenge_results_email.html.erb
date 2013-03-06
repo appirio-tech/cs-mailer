@@ -1,0 +1,35 @@
+<%= render "template_top", :title => @challenge.name %>
+
+  <p><%= @membername %>,</p>
+
+	<p>Thank you for participating in the <%= @challenge.name %> challenge. The challenge is complete and the results are now final. You can <a href="http://www.cloudspokes.com/challenges/<%= @challenge.challenge_id %>/results">view them here</a>.</p>
+
+	<% if @challenge.results_overview %>
+		<p><%= @challenge.results_overview %></p>
+	<% end %>
+
+	<% if @participant.final_prize %>
+
+		<h2>Your Results</h2>
+
+		<p>Place: <%= @participant.place.to_i.ordinalize %><br/>
+		Score: <%= @participant.score %><br/>
+		Prize Awarded: <%= @participant.final_prize %></p>
+
+		<h2>How do I get paid?</h2>
+
+		<p>In order for us to send your payment, we need to receive your tax form. You only need to send us this tax form once and we will keep it on file. You can sign your tax form electronically using DocuSign. <strong>See your <a href="http://www.cloudspokes.com/account/payments">Payment Info page</a> for the links to the correct tax form for	your member account.</strong> See our <a href="http://community.cloudspokes.com/forums#/discussion/17/how-do-i-get-paid">How do I get paid?" FAQ</a> for more information and our calendar for payment dates.</p>
+
+		<p>Please note that it may take up to 48 hours for your results to display on the leaderboard or payments show up as being owed.</p>
+
+		<p>Also, please make sure that your <a href="http://www.cloudspokes.com/account/payments">CloudSpokes profile</a> is up to date with your correct mailing address and your preferred payment method. By default we will send you a check to the address on your profile but we can also pay you with PayPal or wire transfer if you prefer. Each wire transfer requires a $50 fee. If you would like a wire payment, please <a href="https://s3.amazonaws.com/cs-public/wire-info-for+payments.png">send us this information</a>.</p>
+
+		<h2>Blog about your submission!</h2>
+
+		<p>Would you be interested in writing a blog post about your submission for our <a href="http://blog.cloudspokes.com">CloudSpokes blog</a>? Was your approach novel or code super-slick? Do you have a cool video to share demoing your application? Why not blog about your submission, the approach you took, what makes it awesome and perhaps a quick demo. It doesn't have to be too long; maybe 3-10 paragraphs in total. Just reply to this email and let us know that you are interested.</p>
+
+	<% else %>
+		<p>Your score was <%= @participant.score %> and unfortunately was not high enough to win money. We hope to see you participating in future challenges for money, prizes and personal development!</p>
+	<% end %>
+
+<%= render "template_bottom" %>

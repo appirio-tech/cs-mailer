@@ -19,6 +19,7 @@ module Notification
 		challenge_scored(id, true) if type.downcase.eql?('challenge scored waiting review')
 		private_message(id) if type.downcase.eql?('private message')
 		discussion_board_post(id) if type.downcase.eql?('discussion board')
+		challenge_results(id) if type.downcase.eql?('challenge results')
 
 	end
 
@@ -121,6 +122,27 @@ module Notification
 			end			
 
 		end	
+
+		def self.challenge_results(id)
+
+			# get the mail to go out
+		  mail = query_salesforce("select Name, Challenge__c, Subject__c from Mail__c 
+		  	where Id = '"+id+"' limit 1").first
+		  
+		  # get the challenge details
+			challenge = query_salesforce("select name, challenge_id__c, end_date__c, review_date__c, 
+				contact__c, results_overview__c from Challenge__c where Id = '"+mail.challenge+"' limit 1").first
+
+	  	# get all of the particiapnts from the challenge that had a submission
+			participants = query_salesforce("select id, member__r.name, member__r.email__c, final_prize__c, place__c, score__c  
+	  	 from challenge_participant__c where has_submission__c = true and challenge__c = '"+mail.challenge+"'")	  	 	
+
+			participants.each do |r|
+				StreamingMailer.challenge_results_email(r.member__r.email, mail.subject, r.member__r.name, challenge, r).deliver
+			  Rails.logger.info "[INFO][Mailer]Challenge launched mail for #{r.member__r.name} sent: To: #{r.member__r.email}"	
+			end			
+
+		end			
 
 		def self.private_message(id)
 
