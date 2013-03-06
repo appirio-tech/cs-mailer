@@ -139,7 +139,7 @@ module Notification
 
 			participants.each do |r|
 				StreamingMailer.challenge_results_email(r.member__r.email, mail.subject, r.member__r.name, challenge, r).deliver
-			  Rails.logger.info "[INFO][Mailer]Challenge launched mail for #{r.member__r.name} sent: To: #{r.member__r.email}"	
+			  Rails.logger.info "[INFO][Mailer]Challenge results mail for #{r.member__r.name} sent: To: #{r.member__r.email}"	
 			end			
 
 		end			
