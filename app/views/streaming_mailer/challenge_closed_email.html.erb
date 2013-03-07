@@ -13,7 +13,7 @@
 		<% end %>			
 		Winners to be announced: <%= Date.parse(@challenge.winner_announced).strftime("%m/%d/%Y") %></p>
 
-		<p>You can view and download all files that were submitted <a href="http://www.cloudspokes.com/challenges/<%= @challenge.challenge_id %>/all_submissions">from here</a>. Reviewers will find their scorecards for the submissions to be scored on their <a href="http://www.cloudspokes.com/account/outstanding_reviews">Outstanding Reviews page</a>.</p>
+		<p>You can view and download all files that were submitted <a href="http://www.cloudspokes.com/challenges/<%= @challenge.challenge_id %>/all_submissions">from here</a>. Reviewers will find their scorecards for the submissions to be scored on their <a href="http://www.cloudspokes.com/account/outstanding-reviews">Outstanding Reviews page</a>.</p>
 
 	<% else %>
 		<p>The status of this challenge has been changed to "Review", however there were no submissions for this challenge.</p>
