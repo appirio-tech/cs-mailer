@@ -16,6 +16,8 @@
 		Score: <%= @participant.score %><br/>
 		Prize Awarded: <%= @participant.final_prize %></p>
 
+		<p><strong><a href="http://www.cloudspokes.com/challenges/<%= @challenge.challenge_id %>/survey">Give us your feedback on this challenge.</a><strong></p>
+
 		<h2>How do I get paid?</h2>
 
 		<p>In order for us to send your payment, we need to receive your tax form. You only need to send us this tax form once and we will keep it on file. You can sign your tax form electronically using DocuSign. <strong>See your <a href="http://www.cloudspokes.com/account/payments">Payment Info page</a> for the links to the correct tax form for	your member account.</strong> See our <a href="http://community.cloudspokes.com/forums#/discussion/17/how-do-i-get-paid">How do I get paid?" FAQ</a> for more information and our calendar for payment dates.</p>
@@ -30,6 +32,7 @@
 
 	<% else %>
 		<p>Your score was <%= @participant.score %> and unfortunately was not high enough to win money. We hope to see you participating in future challenges for money, prizes and personal development!</p>
+		<p><strong><a href="http://www.cloudspokes.com/challenges/<%= @challenge.challenge_id %>/survey">Give us your feedback on this challenge.</a><strong></p>
 	<% end %>
 
 <%= render "template_bottom" %>
