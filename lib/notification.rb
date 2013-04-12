@@ -43,10 +43,9 @@ module Notification
 			# get all of the non-participant members
 			recipients = all_challenge_recipients(mail.challenge)
 
-			# get all registered & submitted participants where Send_Discussion_Emails__c = true
+			# get all of the participants where Send_Discussion_Emails__c = true
 			participants = query_salesforce("select member__r.name, member__r.email__c from challenge_participant__c 
-      where challenge__c = '#{mail.challenge}' and send_discussion_emails__c =  true 
-      and status__c IN ('Registered','Submitted')")		
+      where challenge__c = '#{mail.challenge}' and send_discussion_emails__c =  true")		
 
 			# add each participant
       participants.each do |p|
