@@ -55,7 +55,9 @@ module Notification
 			unique_recipients(recipients).each do |r|
 				StreamingMailer.discussion_board_email(r[:email], mail.subject, r[:name], challenge, comment).deliver
 			  Rails.logger.info "[INFO][Mailer]Discussion board post mail for #{r[:name]} sent: To: #{r[:email]}"	
-			end      
+			end     
+
+			update_mail_as_processed(id) 
 
 		end
 
@@ -208,6 +210,12 @@ module Notification
 	  rescue Exception => e
 	    Rails.logger.fatal "[FATAL][Mailer] Query exception: #{soql} -- #{e.message}" 
 	    nil
-	  end  			
+	  end
+
+	  def self.update_mail_as_processed(id)
+	  	Forcifier::JsonMassager.deforce_json(@client.update!('Mail__c', Id: id, Processed__c: true))
+	  rescue Exception => e
+	    Rails.logger.fatal "[FATAL][Mailer] Could not mark mail as processed: #{e.message}" 
+	  end		
 
 end
