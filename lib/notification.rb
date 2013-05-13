@@ -82,6 +82,8 @@ module Notification
 			  Rails.logger.info "[INFO][Mailer]Challenge scored mail (waiting_review: #{waiting_review}) for #{r[:name]} sent: To: #{r[:email]}"	
 			end
 
+			update_mail_as_processed(id) 
+
 		end	
 
 		def self.challenge_closed(id)
@@ -101,6 +103,8 @@ module Notification
 				StreamingMailer.challenge_closed_email(r[:email], mail.subject, r[:name], challenge).deliver
 			  Rails.logger.info "[INFO][Mailer]Challenge closed mail for #{r[:name]} sent: To: #{r[:email]}"	
 			end
+
+			update_mail_as_processed(id) 
 
 		end		
 
@@ -122,6 +126,8 @@ module Notification
 			  Rails.logger.info "[INFO][Mailer]Challenge launched mail for #{r[:name]} sent: To: #{r[:email]}"	
 			end			
 
+			update_mail_as_processed(id) 
+
 		end	
 
 		def self.challenge_results(id)
@@ -141,7 +147,9 @@ module Notification
 			participants.each do |r|
 				StreamingMailer.challenge_results_email(r.member__r.email, mail.subject, r.member__r.name, challenge, r).deliver
 			  Rails.logger.info "[INFO][Mailer]Challenge results mail for #{r.member__r.name} sent: To: #{r.member__r.email}"	
-			end			
+			end	
+
+			update_mail_as_processed(id) 		
 
 		end			
 
@@ -164,6 +172,8 @@ module Notification
 		  	from Mail__c where Id = '"+id+"' limit 1").first
 		  StreamingMailer.standard_email(mail.to,mail.from,mail.subject,mail.body).deliver
 		  Rails.logger.info "[INFO][Mailer]Generic mail #{mail.name} sent: To: #{mail.to} - Subject: #{mail.subject}"
+
+		  update_mail_as_processed(id) 
 
 		end		
 
