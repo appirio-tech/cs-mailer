@@ -41,10 +41,11 @@ class StreamingMailer < ActionMailer::Base
       :subject => subject)
   end     
 
-  def discussion_board_email(to, subject, membername, challenge, comment)
+  def discussion_board_email(to, subject, membername, challenge, comment, embed_reply_from_member_id)
     @membername = membername
     @challenge = challenge
     @comment = comment
+    @embed_reply_from_member_id = embed_reply_from_member_id
     mail(:to => "#{membername} <#{to}>", :from => 'CloudSpokes Team <support@cloudspokes.com>', 
       :subject => subject)
   end    
