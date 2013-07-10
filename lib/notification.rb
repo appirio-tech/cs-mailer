@@ -43,12 +43,13 @@ module Notification
       recipients = all_challenge_recipients(mail.challenge)
 
       # get all of the participants where Send_Discussion_Emails__c = true
-      participants = query_salesforce("select member__c, member__r.name, member__r.email__c from challenge_participant__c 
+      participants = query_salesforce("select member__r.id, member__r.name, member__r.email__c from challenge_participant__c 
         where challenge__c = '#{mail.challenge}' and send_discussion_emails__c =  true")		
-
+Rails.logger.info participants.to_yaml
       # add each participant
-      participants.each do |p|
-        recipients << {:member_id => p.member__c, :name => p.member__r.name, :email => p.member__r.email}	
+      participants.each do |p| 
+        Rails.logger.info p.to_yaml
+        recipients << {:member_id => p.member__r.id, :name => p.member__r.name, :email => p.member__r.email}	
       end
 
       unique_recipients(recipients).each do |r|
