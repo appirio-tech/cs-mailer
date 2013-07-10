@@ -16,7 +16,7 @@
 
 <p><table>
 <tr>
-	<td><img src="http://cs-public.s3.amazonaws.com/email_images/email-remove.png" width="40"></td><td>&nbsp;</td><td><a href= "mailto:<%= ENV['SFDC_COMMENT_REPLY_ADDRESS'] %>?subject=New Comment for [<%= @comment.name %>][<%= @embed_reply_from_member_id %>]&body=My comments....">Stop sending me</a> Discussion list email for this challenge.</td>
+	<td><img src="http://cs-public.s3.amazonaws.com/email_images/email-remove.png" width="40"></td><td>&nbsp;</td><td><a href= "mailto:<%= ENV['SFDC_COMMENT_REPLY_ADDRESS'] %>?subject=[<%= @comment.name %>][<%= @embed_reply_from_member_id %>]&body=My comments....">Stop sending me</a> Discussion list email for this challenge.</td>
 <tr>
 </table></p>
 
