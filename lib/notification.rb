@@ -36,7 +36,7 @@ module Notification
 				from Challenge__c where Id = '"+mail.challenge+"' limit 1").first			  
 
 		  # get the comment
-			comment = query_salesforce("select Id, Member__r.name, Member__r.Profile_Pic__c,
+			comment = query_salesforce("select Id, Name, Member__c, Member__r.name, Member__r.Profile_Pic__c,
 				Comment__c, Reply_To__c from Challenge_Comment__c where id 
 				= '"+mail.challenge_comment+"' limit 1").first		
 
